@@ -1,5 +1,6 @@
 using System.Net.Mail;
 using CleanArchitecture.Domain.Abstractions;
+using CleanArchitecture.Domain.Shared;
 
 namespace CleanArchitecture.Domain.Vehiculos;
 
@@ -32,7 +33,7 @@ public sealed class Vehiculo : Entity
   public Currency? Price { get; private set; }
   public Currency? Manteinance { get; private set; }
 
-  public DateTime? DateLastRent { get; set; }
+  public DateTime? DateLastRent { get; internal set; }
 
   public List<Accessory> Accesories { get; private set; } = new();
 
