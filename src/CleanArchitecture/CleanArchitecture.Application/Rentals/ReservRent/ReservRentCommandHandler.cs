@@ -1,5 +1,6 @@
 using CleanArchitecture.Application.Abstractions.Clock;
 using CleanArchitecture.Application.Abstractions.Messaging;
+using CleanArchitecture.Application.Exceptions;
 using CleanArchitecture.Domain.Abstractions;
 using CleanArchitecture.Domain.Rentals;
 using CleanArchitecture.Domain.Users;
@@ -39,13 +40,13 @@ internal sealed class ReservRentCommandHandler
         CancellationToken cancellationToken
     )
     {
-        var user = await _userRepository.GetByIdAsync(request.userId, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
         if (user is null)
         {
             return Result.Failure<Guid>(UserErrors.NotFound);
         }
 
-        var vehiculo = await _vehiculoRepository.GetByIdAsync(request.vehiculoId, cancellationToken);
+        var vehiculo = await _vehiculoRepository.GetByIdAsync(request.VehiculoId, cancellationToken);
         if (vehiculo is null)
         {
             return Result.Failure<Guid>(VehiculoErrors.NotFound);
@@ -58,18 +59,25 @@ internal sealed class ReservRentCommandHandler
             return Result.Failure<Guid>(RentErrors.Overlap);
         }
 
-        var rent = Rent.Reservation(
-            vehiculo,
-            user.Id,
-            duration,
-            _dateTimeProvider.currentTime,
-            _priceService
-        );
+        try
+        {
+            var rent = Rent.Reservation(
+                vehiculo,
+                user.Id,
+                duration,
+                _dateTimeProvider.currentTime,
+                _priceService
+            );
 
-        _rentRepository.Add(rent);
+            _rentRepository.Add(rent);
 
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return rent.Id;
+            return rent.Id;
+        }
+        catch (ConcurrencyException)
+        {
+            return Result.Failure<Guid>(RentErrors.Overlap);
+        }
     }
 }
