@@ -29,8 +29,9 @@ public class RentalsController : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound();
     }
 
-    [HttpPost()]
+    [HttpPost]
     public async Task<IActionResult> ReservRent(
+       Guid id,
        RentReservRequest request,
        CancellationToken cancellationToken
    )
