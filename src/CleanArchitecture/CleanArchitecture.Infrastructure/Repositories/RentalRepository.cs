@@ -27,7 +27,7 @@ internal sealed class RentalRepository : Repository<Rent>, IRentRepository
         .AnyAsync(
             rent =>
                 rent.VehiculoId == vehiculo.Id &&
-                rent.Duration.Start <= duration.End &&
+                rent.Duration!.Start <= duration.End &&
                 rent.Duration.End >= duration.Start &&
                 ActiveRentStatus.Contains(rent.Status),
                 cancellationToken

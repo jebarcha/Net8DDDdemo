@@ -7,11 +7,16 @@ namespace CleanArchitecture.Domain.Rentals;
 
 public sealed class Rent : Entity
 {
+    private Rent()
+    {
+
+    }
+
     private Rent(
         Guid id,
         Guid vehiculoId,
         Guid userId,
-        DateRange duration,
+        DateRange? duration,
         Currency priceByPeriod,
         Currency manteinance,
         Currency accesories,
@@ -40,7 +45,7 @@ public sealed class Rent : Entity
 
     public RentStatus Status { get; private set; }
 
-    public DateRange Duration { get; private set; }
+    public DateRange? Duration { get; private set; }
     public DateTime? CreationDate { get; private set; }
     public DateTime? ConfirmationDate { get; private set; }
     public DateTime? RejectedDate { get; private set; }
@@ -50,14 +55,14 @@ public sealed class Rent : Entity
     public static Rent Reservation(
         Vehiculo vehiculo,
         Guid userId,
-        DateRange duration,
+        DateRange? duration,
         DateTime creationDate,
         PriceService priceService
     )
     {
         var priceDetail = priceService.CalculatePrice(
             vehiculo,
-            duration
+            duration!
         );
 
         var rent = new Rent(

@@ -40,13 +40,13 @@ internal sealed class SearchVehiculoQueryHandler
                 a.id as Id,
                 a.model as Model,
                 a.vin as Vin,
-                a.price as Price,
+                a.price_amount as Price,
                 a.price_currency_type as PriceCurrencyType,
-                a.country as Country,
-                a.departmant as Department,
-                a.state as State,
-                a.city as City,
-                a.street as Street
+                a.address_country as Country,
+                a.address_department as Department,
+                a.address_state as State,
+                a.address_city as City,
+                a.address_street as Street
 
             FROM vehiculos AS a
             WHERE NOT EXISTS
